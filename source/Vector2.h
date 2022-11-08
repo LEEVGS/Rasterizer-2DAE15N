@@ -15,9 +15,14 @@ namespace dae
 		float SqrMagnitude() const;
 		float Normalize();
 		Vector2 Normalized() const;
+		void Clamp(float minX, float minY, float maxX, float maxY);
+		void Clamp(float maxX, float maxY);
+		
 
 		static float Dot(const Vector2& v1, const Vector2& v2);
 		static float Cross(const Vector2& v1, const Vector2& v2);
+		static Vector2 Min(const Vector2& v1, const Vector2& v2);
+		static Vector2 Max(const Vector2& v1, const Vector2& v2);
 
 		//Member Operators
 		Vector2 operator*(float scale) const;

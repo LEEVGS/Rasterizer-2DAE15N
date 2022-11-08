@@ -43,6 +43,18 @@ namespace dae
 
 		void CalculateViewMatrix()
 		{
+			right = Vector3::Cross(Vector3::UnitY, forward).Normalized();
+			up = Vector3::Cross(forward, right);
+			invViewMatrix = Matrix
+			{
+				right,
+				up,
+				forward,
+				origin
+			};
+
+			viewMatrix = invViewMatrix.Inverse();
+
 			//TODO W1
 			//ONB => invViewMatrix
 			//Inverse(ONB) => ViewMatrix
@@ -63,8 +75,49 @@ namespace dae
 		{
 			const float deltaTime = pTimer->GetElapsed();
 
-			//Camera Update Logic
-			//...
+			const float cameraSpeed{ 10.f };
+
+			//Keyboard Input
+			const uint8_t* pKeyboardState = SDL_GetKeyboardState(nullptr);
+
+
+			//Mouse Input
+			int mouseX{}, mouseY{};
+			const uint32_t mouseState = SDL_GetRelativeMouseState(&mouseX, &mouseY); //1 left 4 right
+
+			//Process data
+			if (mouseState == SDL_BUTTON_LEFT)
+			{
+				origin.z -= mouseY * deltaTime;
+			}
+			if (mouseState == SDL_BUTTON_RIGHT)
+			{
+				origin.y -= mouseY * deltaTime;
+			}
+
+			if (pKeyboardState[SDL_SCANCODE_W] || pKeyboardState[SDL_SCANCODE_UP])
+			{
+				origin += cameraSpeed * deltaTime * forward;
+			}
+			if (pKeyboardState[SDL_SCANCODE_S] || pKeyboardState[SDL_SCANCODE_DOWN])
+			{
+				origin -= cameraSpeed * deltaTime * forward;
+			}
+			if (pKeyboardState[SDL_SCANCODE_A] || pKeyboardState[SDL_SCANCODE_LEFT])
+			{
+				origin -= cameraSpeed * deltaTime * right;
+			}
+			if (pKeyboardState[SDL_SCANCODE_D] || pKeyboardState[SDL_SCANCODE_RIGHT])
+			{
+				origin += cameraSpeed * deltaTime * right;
+			}
+			if (mouseState == 4 || mouseState == 1)
+			{
+				totalPitch -= cameraSpeed * TO_RADIANS * mouseY * deltaTime;
+				totalYaw -= cameraSpeed * TO_RADIANS * mouseX * deltaTime;
+			}
+
+			forward = Matrix::CreateRotation(totalPitch, totalYaw, 0.f).TransformVector(Vector3::UnitZ);
 
 			//Update Matrices
 			CalculateViewMatrix();
