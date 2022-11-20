@@ -21,18 +21,25 @@ namespace dae
 
 	Texture* Texture::LoadFromFile(const std::string& path)
 	{
-		//TODO
 		//Load SDL_Surface using IMG_LOAD
-		//Create & Return a new Texture Object (using SDL_Surface)
-
-		return nullptr;
+		return new Texture{ IMG_Load(path.c_str()) };
 	}
 
 	ColorRGB Texture::Sample(const Vector2& uv) const
 	{
-		//TODO
-		//Sample the correct texel for the given uv
+		//Set x & y for later usage
+		const int x = static_cast<int>(uv.x * m_pSurface->w);
+		const int y = static_cast<int>(uv.y * m_pSurface->h);
 
-		return {};
+		//Prepare color get & calculate pixel index on texture
+		Uint32 pixel = m_pSurfacePixels[x + y * m_pSurface->w];
+		Uint8 r{}, g{}, b{};
+
+		//Get RGB color from texture
+		SDL_GetRGB(pixel, m_pSurface->format, &r, &g, &b);
+
+		//Convert to colorRGB
+		const float maxColorValue = 255.f;
+		return ColorRGB{ r / maxColorValue, g / maxColorValue, b / maxColorValue };
 	}
 }

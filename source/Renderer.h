@@ -44,11 +44,29 @@ namespace dae
 
 		Camera m_Camera{};
 
+		Texture* m_pTexture{ nullptr };
+
 		int m_Width{};
 		int m_Height{};
 		float m_AspectRatio{};
 
+		std::vector<Mesh> m_MeshesWorld{};
+
+		int m_VerticesCount{};
+		std::vector<Vertex> m_VerticesWorld{};
+		std::vector<Vertex> m_VerticesNDC{};
+		std::vector<Vector2> m_VerticesScreenSpace{};
+
+		//Create meshes
+		void CreateMeshes();
+
 		//Function that transforms the vertices from the mesh from World space to Screen space
-		void VertexTransformationFunction(const std::vector<Vertex>& vertices_in, std::vector<Vertex>& vertices_out) const; //W1 Version
+		void VertexTransformationWorldToNDC();
+
+		//Draw traingles by using the index
+		void DrawTriangle(int index, bool swapVertices);
+
+		//Find size to reserve
+		size_t FindReserveSize();
 	};
 }
