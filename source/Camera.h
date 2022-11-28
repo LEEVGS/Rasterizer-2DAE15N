@@ -18,9 +18,7 @@ namespace dae
 		{
 		}
 
-
 		Vector3 origin{};
-		float fovAngle{90.f};
 		float fov{ tanf((fovAngle * TO_RADIANS) / 2.f) };
 
 		Vector3 forward{Vector3::UnitZ};
@@ -30,15 +28,21 @@ namespace dae
 		float totalPitch{};
 		float totalYaw{};
 
+		float near = 0.1f;
+		float far = 100.f;
+
 		Matrix invViewMatrix{};
 		Matrix viewMatrix{};
+		Matrix projectionMatrix{};
 
-		void Initialize(float _fovAngle = 90.f, Vector3 _origin = {0.f,0.f,0.f})
+		void Initialize(float _aspectRatio, float _fovAngle = 90.f, const Vector3& _origin = {0.f,0.f,0.f})
 		{
 			fovAngle = _fovAngle;
+			aspectRatio = _aspectRatio;
 			fov = tanf((fovAngle * TO_RADIANS) / 2.f);
 
 			origin = _origin;
+			CalculateProjectionMatrix();
 		}
 
 		void CalculateViewMatrix()
@@ -65,6 +69,7 @@ namespace dae
 
 		void CalculateProjectionMatrix()
 		{
+			projectionMatrix = Matrix::CreatePerspectiveFovLH(fov, aspectRatio, near, far);
 			//TODO W2
 
 			//ProjectionMatrix => Matrix::CreatePerspectiveFovLH(...) [not implemented yet]
@@ -121,7 +126,19 @@ namespace dae
 
 			//Update Matrices
 			CalculateViewMatrix();
-			CalculateProjectionMatrix(); //Try to optimize this - should only be called once or when fov/aspectRatio changes
 		}
+		void SetFOVAngle(float _fov)
+		{
+			fovAngle = _fov;
+			CalculateProjectionMatrix();
+		}
+		void SetAspectRatio(float _aspect)
+		{
+			aspectRatio = _aspect;
+			CalculateProjectionMatrix();
+		}
+		private:
+		float fovAngle{90.f};
+		float aspectRatio;
 	};
 }

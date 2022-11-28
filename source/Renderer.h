@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <string>
 
 #include "Camera.h"
 #include "DataTypes.h"
@@ -30,6 +31,7 @@ namespace dae
 
 		void Update(Timer* pTimer);
 		void Render();
+		void ToggleDepthBuffer();
 
 		bool SaveBufferToImage() const;
 
@@ -50,21 +52,30 @@ namespace dae
 		int m_Height{};
 		float m_AspectRatio{};
 
+		bool m_IsDepthBuffer{ false };
+
 		std::vector<Mesh> m_MeshesWorld{};
 
-		int m_VerticesCount{};
-		std::vector<Vertex> m_VerticesWorld{};
-		std::vector<Vertex> m_VerticesNDC{};
-		std::vector<Vector2> m_VerticesScreenSpace{};
+		size_t m_VerticesCount{};
+		Vertex* m_VerticesWorld;
+		Vertex* m_VerticesNDC;
+		Vector2* m_VerticesScreenSpace;
+		//std::vector<Vertex> m_VerticesWorld{};
+		//std::vector<Vertex> m_VerticesNDC{};
+		//std::vector<Vector2> m_VerticesScreenSpace{};
 
 		//Create meshes
 		void CreateMeshes();
+		void LoadMesh(const std::string& path);
 
 		//Function that transforms the vertices from the mesh from World space to Screen space
 		void VertexTransformationWorldToNDC();
+		void VertexTransformationWorldToNDCNew(Mesh& mesh);
+
+		bool IsVerticesInFrustrum(const Vertex_Out& vertex);
 
 		//Draw traingles by using the index
-		void DrawTriangle(int index, bool swapVertices);
+		void DrawTriangle(int index, bool swapVertices, const Mesh& mesh);
 
 		//Find size to reserve
 		size_t FindReserveSize();

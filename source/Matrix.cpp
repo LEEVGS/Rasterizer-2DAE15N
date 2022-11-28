@@ -152,8 +152,12 @@ namespace dae {
 	Matrix Matrix::CreatePerspectiveFovLH(float fov, float aspect, float zn, float zf)
 	{
 		//TODO W2
-
-		return {};
+		Matrix temp{};
+		temp.data[0] = { 1.f / (aspect * fov), 0, 0, 0 };
+		temp.data[1] = { 0, 1.f/fov, 0, 0 };
+		temp.data[2] = { 0, 0, zf/(zf-zn), 1};
+		temp.data[3] = { 0, 0, -(zf * zn) / (zf - zn), 0};
+		return temp;
 	}
 
 	Vector3 Matrix::GetAxisX() const
